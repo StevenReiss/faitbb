@@ -1,0 +1,13 @@
+Bsean.ProblemTopColor : 	0xffeeeecc
+Bsean.ProblemBottomColor :	0xffeeeea0
+Bsean.ProblemOverviewColor :	0xffeea0ee
+Bsean.ProblemErrorColor  :	0xff720cd7
+Bsean.ProblemWarningColor :	black
+Bsean.ProblemNoticeColor :	0xff056006
+Bsean.ExplainTopColor : 	255,220,255
+Bsean.ExplainBottomColor :	255,250,255
+Bsean.ExplainAnnotColor :	200,100,255
+Bsean.VarTopColor :		255,220,255
+Bsean.VarBottomColor :		255,250,255
+
+
