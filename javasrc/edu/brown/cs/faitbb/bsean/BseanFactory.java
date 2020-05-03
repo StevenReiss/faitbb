@@ -672,9 +672,13 @@ private static class ValueAction extends AbstractAction implements Runnable {
 /*										*/
 /********************************************************************************/
 
-private static class StartAction implements BudaConstants.ButtonListener {
+private static class StartAction implements BudaConstants.ButtonListener, Runnable {
 
    @Override public void buttonActivated(BudaBubbleArea bba,String id,Point pt) {
+      BoardThreadPool.start(this);
+    }
+   
+   @Override public void run() {
       BseanFactory fac = getFactory();
       fac.start();
     }
@@ -808,8 +812,8 @@ private static class BseanStarter extends Thread {
       buda_root.waitForSetup();
       BseanFactory bf = getFactory();
       if (bf.auto_start){
-	 bf.start();
-	 bf.auto_start = false;
+         bf.start();
+         bf.auto_start = false;
        }
    }
 
@@ -823,23 +827,42 @@ private static class BseanStarter extends Thread {
 /*										*/
 /********************************************************************************/
 
-static class FreditAction implements BudaConstants.ButtonListener {
+static class FreditAction implements BudaConstants.ButtonListener, Runnable {
 
+   private BudaBubbleArea bubble_area;
+   private Point at_point;
+   private BudaBubble result_bubble;
+   
+   FreditAction()                       { }
+   
    @Override public void buttonActivated(BudaBubbleArea bba,String id,Point pt) {
       if (bba == null) return;
-
-      BudaBubble bbl = null;
-      try {
-	 bbl = new BseanFreditBubble();
-       }
-      catch (BseanException e) {
-	 BoardLog.logE("BSEAN","Problem creating problem bubble",e);
-	 return;
-       }
-      BudaBubblePosition pos = BudaBubblePosition.MOVABLE;
-      int place = BudaConstants.PLACEMENT_LOGICAL | BudaConstants.PLACEMENT_USER;
-      bba.addBubble(bbl,null,pt,place,pos);
+      bubble_area = bba;
+      at_point = pt;
+      result_bubble = null;
+      
+      BoardThreadPool.start(this);
     }
+   
+   @Override public void run() {
+      if (result_bubble != null) {
+         BudaBubblePosition pos = BudaBubblePosition.MOVABLE;
+         int place = BudaConstants.PLACEMENT_LOGICAL | BudaConstants.PLACEMENT_USER;
+         bubble_area.addBubble(result_bubble,null,at_point,place,pos);
+       }
+      else {
+         try {
+            result_bubble = new BseanFreditBubble();
+          }
+         catch (BseanException e) {
+            BoardLog.logE("BSEAN","Problem creating problem bubble",e);
+            return;
+          }
+         if (result_bubble != null) SwingUtilities.invokeLater(this);
+       }
+    }
+   
+   
 
 }	// end of inner class ExplainAction
 

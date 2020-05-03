@@ -50,6 +50,7 @@ import java.util.Set;
 
 import javax.swing.AbstractAction;
 import javax.swing.Icon;
+import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -180,7 +181,7 @@ BseanExplainBubble(Element qelt,String msg) throws BseanException
 
    pnl.addBottomButton("Show Code","SHOWCODE",new ShowAllCodeAction());
    JButton btn = pnl.addBottomButton("Create Test Case","TESTCASE",new TestCaseAction());
-   
+   btn.setEnabled(false);
    pnl.addBottomButtons();
 
    annot_map = new HashMap<>();
