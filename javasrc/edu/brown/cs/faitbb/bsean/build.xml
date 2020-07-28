@@ -1,7 +1,6 @@
 <project name='faitbb.bsean' default='compile'>
 
    <property file='../../../../../../build.properties' />
-   <property name="UPRO" value='/research/people/spr' />
    <property name='PRO' value='/pro' />
    <property name='BUBBLES' value='/pro/bubbles' />
    <available file="${PRO}/ivy" type="dir" property="ivy.present" />
@@ -14,18 +13,18 @@
    <target name='init' depends='init1,init2' >
       <path id='faitbb.classpath'>
 	 <pathelement location='${BUBBLES}/java' />
-	 <pathelement location='${UPRO}/fredit/java' />
+	 <pathelement location='${PRO}/fredit/java' />
 	 <pathelement location='${IVYBIN}' />
       </path>
       <path id='test.classpath'>
 	 <pathelement location='${BUBBLES}/java' />
-	 <pathelement location='${UPRO}/fredit/java' />
+	 <pathelement location='${PRO}/fredit/java' />
 	 <pathelement location='${IVYBIN}' />
       </path>
    </target>
 
    <target name='compile' depends='init'>
-      <javac srcdir='.' destdir='${UPRO}/faitbb/java' debug='on' deprecation='on'
+      <javac srcdir='.' destdir='${PRO}/faitbb/java' debug='on' deprecation='on'
 		includeantruntime='false' excludes='scan/**' >
 	 <classpath refid='faitbb.classpath' />
 	 <compilerarg value='-Xlint:all' />
@@ -33,7 +32,7 @@
    </target>
 
    <target name='clean'>
-      <delete dir='${UPRO}/faitbb/java/edu/brown/cs/bubbles/bsean' />
+      <delete dir='${PRO}/faitbb/java/edu/brown/cs/bubbles/bsean' />
    </target>
 
    <target name='test' depends='compile'>
