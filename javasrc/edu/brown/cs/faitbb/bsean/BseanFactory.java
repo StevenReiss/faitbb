@@ -547,7 +547,6 @@ private class UpdateHandler implements MintHandler {
 /*										*/
 /********************************************************************************/
 
-
 private static class ViewListener implements BubbleViewCallback {
 
    @Override public void doneConfiguration()				{ }
@@ -564,7 +563,7 @@ private static class ViewListener implements BubbleViewCallback {
       BseanFactory.getFactory().handleEditorAdded(bb);
     }
 
-}
+}	// end of inner class ViewListener
 
 
 
