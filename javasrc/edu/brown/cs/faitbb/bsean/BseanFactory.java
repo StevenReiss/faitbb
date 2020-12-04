@@ -686,14 +686,14 @@ private static class ProblemBubbleAction implements BudaConstants.ButtonListener
 
    @Override public void buttonActivated(BudaBubbleArea bba,String id,Point pt) {
       if (bba == null) return;
-
+   
       BudaBubble bbl = null;
       try {
-	 bbl = new BseanProblemBubble();
+         bbl = new BseanProblemBubble();
        }
       catch (BseanException e) {
-	 BoardLog.logE("BSEAN","Problem creating problem bubble",e);
-	 return;
+         BoardLog.logE("BSEAN","Problem creating problem bubble",e);
+         return;
        }
       BudaBubblePosition pos = BudaBubblePosition.MOVABLE;
       BoardProperties bp = BoardProperties.getProperties("Bsean");
@@ -746,9 +746,11 @@ static class ExplainAction extends AbstractAction implements Runnable {
 	    "START",er0.getEclipseOffset());
       BseanFactory bfac = getFactory();
       Element rslt = bfac.sendFaitMessage(null,"QUERY",args,null);
+      BoardLog.logD("BSEAN","Query result: " + rslt);
       if (rslt == null) return;
       Element rset = IvyXml.getChild(rslt,"RESULTSET");
       for (Element qelt : IvyXml.children(rset,"QUERY")) {
+         BoardLog.logD("BSEAN","Handle query result");
 	 try {
 	    BudaBubble nbbl = new BseanExplainBubble(qelt,null);
 	    SwingUtilities.invokeLater(new CreateBubble(for_window,nbbl));
@@ -771,11 +773,12 @@ static class CreateBubble implements Runnable {
     }
 
    @Override public void run() {
+      BoardLog.logD("BSEAN","Create explanation " + new_bubble);
       if (new_bubble == null) return;
       BudaBubbleArea bba = BudaRoot.findBudaBubbleArea(for_window);
       bba.addBubble(new_bubble,for_window,null,
-	    BudaConstants.PLACEMENT_LOGICAL|BudaConstants.PLACEMENT_NEW|
-	    BudaConstants.PLACEMENT_MOVETO|BudaConstants.PLACEMENT_USER);
+            BudaConstants.PLACEMENT_LOGICAL|BudaConstants.PLACEMENT_NEW|
+            BudaConstants.PLACEMENT_MOVETO|BudaConstants.PLACEMENT_USER);
     }
 
 }	// end of inner class CreateBubble
