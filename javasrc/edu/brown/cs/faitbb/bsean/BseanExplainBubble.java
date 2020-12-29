@@ -414,7 +414,7 @@ private static class GraphNode {
       method_description = IvyXml.getAttrString(xml,"SIGNATURE");
       is_start = IvyXml.getAttrBool(xml,"START");
       is_end = IvyXml.getAttrBool(xml,"END");
-
+   
       Element pt = IvyXml.getChild(xml,"POINT");
       start_offset = IvyXml.getAttrInt(pt,"START");
       end_offset = IvyXml.getAttrInt(pt,"END");
@@ -423,7 +423,7 @@ private static class GraphNode {
       line_number = IvyXml.getAttrInt(pt,"LINE");
       ins_offset = IvyXml.getAttrInt(pt,"LOC");
       node_text = IvyXml.getText(pt);
-
+   
       to_nodes = new ArrayList<>();
       from_nodes = new ArrayList<>();
     }
@@ -1038,7 +1038,7 @@ private class ShowCodeAction extends AbstractAction {
       BudaBubble bb = BaleFactory.getFactory().createMethodBubble(proj,mid);
       if (bb == null) return;
       bba.addBubble(bb,BseanExplainBubble.this,null,
-	    PLACEMENT_PREFER|PLACEMENT_GROUPED|PLACEMENT_MOVETO);
+            PLACEMENT_PREFER|PLACEMENT_GROUPED|PLACEMENT_MOVETO);
     }
 
 }	// end of inner class ShowCodeAction
