@@ -89,6 +89,9 @@ BseanSession() throws BseanException
 
    Element rslt = sendFaitMessage("BEGIN",null,null);
    if (!IvyXml.isElement(rslt,"RESULT")) throw new BseanException("Failed to create session");
+   Element sess = IvyXml.getChild(rslt,"SESSION");
+   String sid = IvyXml.getAttrString(sess,"ID");
+   if (sid != null) session_id = sid;
 }
 
 
