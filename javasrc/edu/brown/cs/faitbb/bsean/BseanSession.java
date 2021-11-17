@@ -27,6 +27,7 @@ import edu.brown.cs.bubbles.board.BoardImage;
 import edu.brown.cs.bubbles.board.BoardLog;
 import edu.brown.cs.bubbles.board.BoardMetrics;
 import edu.brown.cs.bubbles.board.BoardProperties;
+import edu.brown.cs.bubbles.board.BoardThreadPool;
 import edu.brown.cs.bubbles.buda.BudaBubble;
 import edu.brown.cs.ivy.exec.IvyExecQuery;
 import edu.brown.cs.ivy.swing.SwingEventListenerList;
@@ -202,7 +203,7 @@ void handleEditorAdded(File f)
       ++ct;
     }
    if (ct > 0) {
-      sendFaitMessage("ADDFILE",null,buf.toString());
+      backgroundFaitMessage("ADDFILE",null,buf.toString());
     }
 }
 
@@ -269,6 +270,53 @@ Element sendFaitMessage(String cmd,CommandArgs args,String cnts)
    BseanFactory bf = BseanFactory.getFactory();
    return bf.sendFaitMessage(session_id,cmd,args,cnts);
 }
+
+
+BackgroundFait backgroundFaitMessage(String cmd,CommandArgs args,String cnts)
+{
+   BackgroundFait bgf = new BackgroundFait(cmd,args,cnts);
+   BoardThreadPool.start(bgf);
+   return bgf;
+}
+
+
+private final class BackgroundFait implements Runnable {
+
+private String command_name;
+private CommandArgs command_args;
+private String command_contents;
+private Element command_reply;
+private boolean have_reply;
+
+BackgroundFait(String cmd,CommandArgs args,String cnts) {
+   command_name = cmd;
+   command_args = args;
+   command_contents = cnts;
+   command_reply = null;
+   have_reply = false;
+}
+
+@Override public void run() {
+   BseanFactory bf = BseanFactory.getFactory();
+   command_reply = bf.sendFaitMessage(session_id,command_name,command_args,command_contents);
+   synchronized(this) {
+      have_reply = true;
+      notifyAll();
+    }
+}
+
+@SuppressWarnings("unused")
+synchronized Element getResponse() { 
+   while (!have_reply) {
+      try {
+         wait(5000);
+       }
+      catch(InterruptedException e) { }
+    }
+   return command_reply;
+}
+
+}       // end of inner class BackgroundFait
 
 
 
