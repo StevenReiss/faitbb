@@ -78,10 +78,10 @@ class BseanProblemBubble extends BudaBubble implements BseanConstants, BseanErro
 
 private Font base_font;
 private ProblemTable problem_table;
-private Map<String,List<BseanError>> error_set;
-private List<BseanError> active_errors;
+private transient Map<String,List<BseanError>> error_set;
+private transient List<BseanError> active_errors;
 private int base_height;
-private BseanSession for_session;
+private transient BseanSession for_session;
 
 
 private static BoardProperties bsean_properties = BoardProperties.getProperties("Bsean");
@@ -306,9 +306,9 @@ private Integer getLine(BseanError bp)
 
 private class ProblemTable extends JTable implements MouseListener
 {
-   private ErrorRenderer [] error_renderer;
-   private WarningRenderer [] warning_renderer;
-   private NoticeRenderer [] notice_renderer;
+   private transient ErrorRenderer [] error_renderer;
+   private transient WarningRenderer [] warning_renderer;
+   private transient NoticeRenderer [] notice_renderer;
 
    private static final long serialVersionUID = 1;
 

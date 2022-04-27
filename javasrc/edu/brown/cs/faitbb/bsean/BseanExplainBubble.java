@@ -101,15 +101,15 @@ class BseanExplainBubble extends BudaBubble implements BseanConstants
 /*										*/
 /********************************************************************************/
 
-private GraphNode	start_node;
-private PathNode	current_path;
+private transient GraphNode start_node;
+private transient PathNode current_path;
 private PathTree	path_tree;
 private PathModel	path_model;
 private int		alternate_offset;
 private int		alternate_width;
-private Element 	query_xml;
+private transient Element query_xml;
 
-private Map<GraphNode,BseanAnnot> annot_map;
+private transient Map<GraphNode,BseanAnnot> annot_map;
 
 private static final long serialVersionUID = 1;
 
@@ -587,9 +587,9 @@ private static class MethodNode {
 
 private static class PathModel extends DefaultTreeModel {
 
-   private PathNode start_node;
-   private List<PathNode> path_list;
-   private List<MethodNode> method_list;
+   private transient PathNode start_node;
+   private transient List<PathNode> path_list;
+   private transient List<MethodNode> method_list;
 
    private static final long serialVersionUID = 1;
 
@@ -928,7 +928,7 @@ private class PathCellRenderer extends JPanel implements TreeCellRenderer {
    private JLabel open_label;
    private JLabel alternate_label;
    private JLabel description_label;
-   private Icon alternate_icon;
+   private transient Icon alternate_icon;
 
    private static final long serialVersionUID = 1;
 
@@ -1018,7 +1018,7 @@ private class PathCellRenderer extends JPanel implements TreeCellRenderer {
 
 private class ShowCodeAction extends AbstractAction {
 
-   private GraphNode graph_node;
+   private transient GraphNode graph_node;
 
    private static final long serialVersionUID = 1;
 

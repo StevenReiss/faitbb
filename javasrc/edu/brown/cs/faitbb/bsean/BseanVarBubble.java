@@ -100,13 +100,13 @@ class BseanVarBubble extends BudaBubble implements BseanConstants
 /*										*/
 /********************************************************************************/
 
-private Map<VarType,Map<Integer,VarEntity>> entity_map;
-private BaleContextConfig bale_context;
-private List<VarValue>	other_values;
-private VarLocation	at_location;
-private List<EntityBox> entity_boxes;
-private EntitySelector	selection_listener;
-private Map<String,Set<String>> ignore_values;
+private transient Map<VarType,Map<Integer,VarEntity>> entity_map;
+private transient BaleContextConfig bale_context;
+private transient List<VarValue> other_values;
+private transient VarLocation at_location;
+private transient List<EntityBox> entity_boxes;
+private transient EntitySelector selection_listener;
+private transient Map<String,Set<String>> ignore_values;
 
 private static final long serialVersionUID = 1;
 
@@ -408,7 +408,7 @@ private static String getButtonName(VarEntity ve,String nm,String vl)
 
 private class FlowToAction extends AbstractAction implements Runnable {
 
-   private VarEntity base_entity;
+   private transient VarEntity base_entity;
    private static final long serialVersionUID = 1;
 
    FlowToAction(VarEntity ent) {
@@ -455,7 +455,7 @@ private class FlowToAction extends AbstractAction implements Runnable {
 
 private class FlowFromAction extends AbstractAction implements Runnable {
 
-   private EntityBox base_entity;
+   private transient EntityBox base_entity;
    private static final long serialVersionUID = 1;
 
    FlowFromAction(EntityBox eb) {
@@ -477,7 +477,7 @@ private class FlowFromAction extends AbstractAction implements Runnable {
 
 private class FlowExplainAction extends AbstractAction implements Runnable {
 
-   private VarEntity base_entity;
+   private transient VarEntity base_entity;
    private String subtype_name;
    private String subtype_value;
    private static final long serialVersionUID = 1;

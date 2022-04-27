@@ -616,7 +616,7 @@ private static class EditorListener implements BaleContextListener {
 
 private static class ValueAction extends AbstractAction implements Runnable {
 
-   private BaleContextConfig start_context;
+   private transient BaleContextConfig start_context;
 
    private static final long serialVersionUID = 1;
 
@@ -715,7 +715,7 @@ private static class ProblemBubbleAction implements BudaConstants.ButtonListener
 static class ExplainAction extends AbstractAction implements Runnable {
 
    private Component for_window;
-   private List<BseanError> for_errors;
+   private transient List<BseanError> for_errors;
 
    private static final long serialVersionUID = 1;
 
@@ -861,7 +861,7 @@ static class FreditAction implements BudaConstants.ButtonListener, Runnable {
 
 private static class BseanFreditBubble extends BudaBubble {
 
-   private FreditorRemote freditor_remote;
+   private transient FreditorRemote freditor_remote;
 
    private static final long serialVersionUID = 1;
 
