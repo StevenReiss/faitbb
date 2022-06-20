@@ -176,6 +176,12 @@ public static void initialize(BudaRoot br)
 	     }
 	  }
        }
+      try {
+         Class.forName("edu.brown.cs.rose.stem.StemMain");
+         haveannot = true;
+       }
+      catch (ClassNotFoundException e) { }
+      
       if (haveannot) {
 	 getFactory().auto_start = true;
 	 BseanStarter bs = new BseanStarter(br);
@@ -258,6 +264,7 @@ private void start()
       if (current_session != null) current_session.remove();
       current_session = new BseanSession();
       current_session.begin();
+      // check here to add all files if that is easy to do
       for (File f : open_files) {
 	 current_session.handleEditorAdded(f);
        }
