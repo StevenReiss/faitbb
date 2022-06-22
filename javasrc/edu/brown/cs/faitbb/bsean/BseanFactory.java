@@ -234,6 +234,20 @@ private BseanFactory()
 /*										*/
 /********************************************************************************/
 
+public static void beginAnalysis()
+{
+   BseanFactory fac = getFactory();
+   if (fac.current_session != null || fac.server_running || fac.server_started ||
+         fac.auto_start) {
+      // should check if current_session still valid
+      return;
+    }
+   
+   fac.start();
+}
+
+
+
 BseanSession getCurrentSession()
 {
    if (server_running) {
@@ -675,8 +689,7 @@ private static class StartAction implements BudaConstants.ButtonListener, Runnab
     }
 
    @Override public void run() {
-      BseanFactory fac = getFactory();
-      fac.start();
+      beginAnalysis();
     }
 
 }	// end of inner class StartAction
@@ -742,15 +755,15 @@ static class ExplainAction extends AbstractAction implements Runnable {
       StringBuffer errids = new StringBuffer();
       errids.append(er0.getId());
       for (int i = 1; i < for_errors.size(); ++i) {
-	 errids.append(" ");
-	 errids.append(for_errors.get(i).getId());
+         errids.append(" ");
+         errids.append(for_errors.get(i).getId());
        }
       CommandArgs args = new CommandArgs("FILE",er0.getFile(),
-	    "QTYPE","ERROR",
-	    "LINE",er0.getLine(),
-	    "ERROR",errids.toString(),
-	    "METHOD",er0.getMethod(),
-	    "START",er0.getEclipseOffset());
+            "QTYPE","ERROR",
+            "LINE",er0.getLine(),
+            "ERROR",errids.toString(),
+            "METHOD",er0.getMethod(),
+            "START",er0.getEclipseOffset());
       BseanFactory bfac = getFactory();
       Element rslt = bfac.sendFaitMessage(null,"QUERY",args,null);
       BoardLog.logD("BSEAN","Query result: " + rslt);
@@ -758,11 +771,11 @@ static class ExplainAction extends AbstractAction implements Runnable {
       Element rset = IvyXml.getChild(rslt,"RESULTSET");
       for (Element qelt : IvyXml.children(rset,"QUERY")) {
          BoardLog.logD("BSEAN","Handle query result");
-	 try {
-	    BudaBubble nbbl = new BseanExplainBubble(qelt,null);
-	    SwingUtilities.invokeLater(new CreateBubble(for_window,nbbl));
-	  }
-	 catch (BseanException e) { }
+         try {
+            BudaBubble nbbl = new BseanExplainBubble(qelt,null);
+            SwingUtilities.invokeLater(new CreateBubble(for_window,nbbl));
+          }
+         catch (BseanException e) { }
        }
     }
 

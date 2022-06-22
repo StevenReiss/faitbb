@@ -193,6 +193,7 @@ void startAnalysis() throws BseanException
 void handleEditorAdded(File f)
 {
    if (f == null) return;
+   if (!f.getPath().endsWith(".java")) return;
 
    StringBuffer buf = new StringBuffer();
    int ct = 0;
