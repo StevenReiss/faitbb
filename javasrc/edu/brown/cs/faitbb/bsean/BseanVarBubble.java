@@ -422,30 +422,30 @@ private class FlowToAction extends AbstractAction implements Runnable {
 
    @Override public void run() {
       for (VarRef vr : base_entity.getReferences()) {
-	 CommandArgs args = new CommandArgs("FILE",bale_context.getDocument().getFile().getPath(),
-	       "QTYPE","TO",
-	       "LINE",at_location.getLineNumber(),
-	       "START",at_location.getStartPosition(),
-	       "LOCATION",at_location.getStartNodeType(),
-	       "AFTER",at_location.getAfterStartPosition(),
-	       "AFTERLOCATION",at_location.getAfterNodeType(),
-	       "METHOD",vr.getCallMethod(),
-	       "ENTITY",base_entity.getId(),
-	       "TYPE",base_entity.getType().getName(),
-	       "VARIABLE",at_location.getVariableName());
-	 IvyXmlWriter xw = new IvyXmlWriter();
-	 vr.outputXml(xw);
-	 BseanFactory fac = BseanFactory.getFactory();
-	 Element rslt = fac.sendFaitMessage(null,"QUERY",args,xw.toString());
-	 if (rslt == null) return;
-	 String msg = "Flow of " + base_entity.getShortName();
-	 for (Element qelt : IvyXml.children(rslt,"QUERY")) {
-	    try {
-	       BudaBubble nbbl = new BseanExplainBubble(qelt,msg);
-	       SwingUtilities.invokeLater(new BseanFactory.CreateBubble(BseanVarBubble.this,nbbl));
-	     }
-	    catch (BseanException e) { }
-	  }
+         CommandArgs args = new CommandArgs("FILE",bale_context.getDocument().getFile().getPath(),
+               "QTYPE","TO",
+               "LINE",at_location.getLineNumber(),
+               "START",at_location.getStartPosition(),
+               "LOCATION",at_location.getStartNodeType(),
+               "AFTER",at_location.getAfterStartPosition(),
+               "AFTERLOCATION",at_location.getAfterNodeType(),
+               "METHOD",vr.getCallMethod(),
+               "ENTITY",base_entity.getId(),
+               "TYPE",base_entity.getType().getName(),
+               "VARIABLE",at_location.getVariableName());
+         IvyXmlWriter xw = new IvyXmlWriter();
+         vr.outputXml(xw);
+         BseanFactory fac = BseanFactory.getFactory();
+         Element rslt = fac.sendFaitMessage(null,"QUERY",args,xw.toString());
+         if (rslt == null) return;
+         String msg = "Flow of " + base_entity.getShortName();
+         for (Element qelt : IvyXml.children(rslt,"QUERY")) {
+            try {
+               BudaBubble nbbl = new BseanExplainBubble(qelt,msg,false);
+               SwingUtilities.invokeLater(new BseanFactory.CreateBubble(BseanVarBubble.this,nbbl));
+             }
+            catch (BseanException e) { }
+          }
        }
     }
 
@@ -495,32 +495,32 @@ private class FlowExplainAction extends AbstractAction implements Runnable {
 
    @Override public void run() {
       for (VarRef vr : base_entity.getReferences()) {
-	 CommandArgs args = new CommandArgs("FILE",bale_context.getDocument().getFile().getPath(),
-	       "QTYPE","EXPLAIN",
-	       "LINE",at_location.getLineNumber(),
-	       "START",at_location.getStartPosition(),
-	       "LOCATION",at_location.getStartNodeType(),
-	       "AFTER",at_location.getAfterStartPosition(),
-	       "AFTERLOCATION",at_location.getAfterNodeType(),
-	       "METHOD",vr.getCallMethod(),
-	       "ENTITY",base_entity.getId(),
-	       "TYPE",base_entity.getType().getName(),
-	       "SBUTYPE",subtype_name,
-	       "SUBTYPEVLAUE",subtype_value,
-	       "VARIABLE",at_location.getVariableName());
-	 IvyXmlWriter xw = new IvyXmlWriter();
-	 vr.outputXml(xw);
-	 BseanFactory fac = BseanFactory.getFactory();
-	 Element rslt = fac.sendFaitMessage(null,"QUERY",args,xw.toString());
-	 if (rslt == null) return;
-	 Element rset = IvyXml.getChild(rslt,"RESULTSET");
-	 for (Element qelt : IvyXml.children(rset,"QUERY")) {
-	    try {
-	       BudaBubble nbbl = new BseanExplainBubble(qelt,null);
-	       SwingUtilities.invokeLater(new BseanFactory.CreateBubble(BseanVarBubble.this,nbbl));
-	     }
-	    catch (BseanException e) { }
-	  }
+         CommandArgs args = new CommandArgs("FILE",bale_context.getDocument().getFile().getPath(),
+               "QTYPE","EXPLAIN",
+               "LINE",at_location.getLineNumber(),
+               "START",at_location.getStartPosition(),
+               "LOCATION",at_location.getStartNodeType(),
+               "AFTER",at_location.getAfterStartPosition(),
+               "AFTERLOCATION",at_location.getAfterNodeType(),
+               "METHOD",vr.getCallMethod(),
+               "ENTITY",base_entity.getId(),
+               "TYPE",base_entity.getType().getName(),
+               "SBUTYPE",subtype_name,
+               "SUBTYPEVLAUE",subtype_value,
+               "VARIABLE",at_location.getVariableName());
+         IvyXmlWriter xw = new IvyXmlWriter();
+         vr.outputXml(xw);
+         BseanFactory fac = BseanFactory.getFactory();
+         Element rslt = fac.sendFaitMessage(null,"QUERY",args,xw.toString());
+         if (rslt == null) return;
+         Element rset = IvyXml.getChild(rslt,"RESULTSET");
+         for (Element qelt : IvyXml.children(rset,"QUERY")) {
+            try {
+               BudaBubble nbbl = new BseanExplainBubble(qelt,null,false);
+               SwingUtilities.invokeLater(new BseanFactory.CreateBubble(BseanVarBubble.this,nbbl));
+             }
+            catch (BseanException e) { }
+          }
        }
     }
 

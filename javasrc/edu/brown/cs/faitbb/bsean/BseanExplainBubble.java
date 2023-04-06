@@ -44,6 +44,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -120,7 +121,7 @@ private static final long serialVersionUID = 1;
 /*										*/
 /********************************************************************************/
 
-BseanExplainBubble(Element qelt,String msg) throws BseanException
+BseanExplainBubble(Element qelt,String msg,boolean compact) throws BseanException
 {
    query_xml = qelt;
    Element gelt = IvyXml.getChild(qelt,"GRAPH");
@@ -144,6 +145,8 @@ BseanExplainBubble(Element qelt,String msg) throws BseanException
        }
     }
 
+   if (compact) compactGraph(nodemap);
+   
    sortGraphNodes(nodemap.values());
    current_path = new PathNode(start_node,null);
    current_path.nextPath();
@@ -295,6 +298,17 @@ private void sortGraphNodes(Collection<GraphNode> nodes)
    for (GraphNode gn : nodes) {
       List<GraphNode> from = gn.getFromNodes();
       Collections.sort(from,nc);
+    }
+}
+
+
+private void compactGraph(Map<String,GraphNode> nodemap) 
+{
+   for (Iterator<GraphNode> it = nodemap.values().iterator(); it.hasNext(); ) {
+      GraphNode gn = it.next();
+      if (gn.remove()) {
+         it.remove();
+       }
     }
 }
 
@@ -459,6 +473,29 @@ private static class GraphNode {
    String getFile()				{ return node_file; }
 
    int getStartOffset() 			{ return start_offset; }
+   
+   boolean canRemove() {
+      if (to_nodes.size() != 1) return false;
+      GraphNode gn = to_nodes.get(0);
+      if (gn.from_nodes.size() != 1) return false;
+      if (gn.from_nodes.get(0) != this) return false;
+      
+      if (line_number != gn.line_number) return false;
+      if (!node_reason.equals(gn.node_reason)) return false;
+      if (!method_description.equals(gn.method_description)) return false;
+      if (!node_file.equals(gn.node_file)) return false;
+      if (!node_method.equals(gn.node_method)) return false;
+      
+      return true;
+    }
+   
+   boolean remove() {
+      if (!canRemove()) return false;
+      GraphNode gn = to_nodes.get(0);
+      BoardLog.logD("BSEAN","Remove node " + node_id + " " + gn.node_id);
+      gn.from_nodes = from_nodes;
+      return true;
+    }
 
    void outputXml(IvyXmlWriter xw) {
       xw.begin("NODE");
@@ -876,10 +913,10 @@ private class BseanAnnot implements BaleConstants.BaleAnnotation {
       for_document = BaleFactory.getFactory().getFileOverview(null,for_file,false);
       execute_pos = null;
       try {
-	 execute_pos = for_document.createPosition(gn.getStartOffset());
+         execute_pos = for_document.createPosition(gn.getStartOffset());
        }
       catch (BadLocationException ex) {
-	 BoardLog.logE("BSEAN","Bad graph node position",ex);
+         BoardLog.logE("BSEAN","Bad graph node position",ex);
        }
     }
 

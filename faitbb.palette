@@ -6,7 +6,7 @@ Bsean.ProblemWarningColor :	black
 Bsean.ProblemNoticeColor :	0xff056006
 Bsean.ExplainTopColor : 	255,220,255
 Bsean.ExplainBottomColor :	255,250,255
-Bsean.ExplainAnnotColor :	200,100,255
+Bsean.ExplainAnnotColor :	200,100,255,128
 Bsean.VarTopColor :		255,220,255
 Bsean.VarBottomColor :		255,250,255
 
