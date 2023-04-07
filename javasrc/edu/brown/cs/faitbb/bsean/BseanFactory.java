@@ -626,7 +626,8 @@ private static class EditorListener implements BaleContextListener {
                BoardLog.logE("BSEAN","Can't find method name for " + cfg.getDocument());
                break;
              }
-            menu.add(new ValueAction(cfg));
+            menu.add(new ValueAction(cfg,true));
+            menu.add(new ValueAction(cfg,false));
             break;
        }
     }
@@ -638,12 +639,14 @@ private static class EditorListener implements BaleContextListener {
 private static class ValueAction extends AbstractAction implements Runnable {
 
    private transient BaleContextConfig start_context;
+   private boolean do_backflow;
    
    private static final long serialVersionUID = 1;
 
-   ValueAction(BaleContextConfig cfg) {
-      super("Provide Flow Data for " + cfg.getToken());
+   ValueAction(BaleContextConfig cfg,boolean backflow) {
+      super((backflow ? "Show backward slice for " : "Show reaching values for ") + cfg.getToken());
       start_context = cfg;
+      do_backflow = backflow;
     }
 
    @Override public void actionPerformed(ActionEvent e) {
@@ -653,38 +656,38 @@ private static class ValueAction extends AbstractAction implements Runnable {
    @Override public void run() {
       int pos = start_context.getOffset();
       int apos = start_context.getDocument().mapOffsetToEclipse(pos);
+      BoardProperties bp = BoardProperties.getProperties("Bsean");
+      int conddepth = bp.getInt("Bsean.slice.conddepth",4);
+      int depth = bp.getInt("Bsean.slice.depth",10);
       CommandArgs args = new CommandArgs("FILE",start_context.getEditor().getContentFile(),
             "START",apos,
             "LINE",start_context.getLineNumber(),
             "TOKEN",start_context.getToken(),
             "METHOD",start_context.getMethodName(),
+            "CONDDEPTH",conddepth,"DEPTH",depth,
             "QTYPE","TOKEN");
       BseanFactory fac = getFactory();
-      Element rslt =  fac.sendFaitMessage(null,"VARQUERY",args,null);
-      Element qrslt = IvyXml.getChild(rslt,"VALUESET");
-      Element rslt1 = fac.sendFaitMessage(null,"FLOWQUERY",args,null);
-      Element frslt = IvyXml.getChild(rslt1,"QUERY");
       
-      if (qrslt != null) {
-         try {
-            BseanVarBubble vbbl = new BseanVarBubble(start_context,qrslt);
-            SwingUtilities.invokeLater(new CreateBubble(start_context.getEditor(),vbbl));
+      BudaBubble bubble = null;
+      try {
+         if (do_backflow) {
+            Element rslt1 = fac.sendFaitMessage(null,"FLOWQUERY",args,null);
+            Element frslt = IvyXml.getChild(rslt1,"QUERY");
+            String msg = "Flow for " + start_context.getToken();
+            bubble = new BseanExplainBubble(frslt,msg,true); 
           }
-         catch (BseanException e) {
-            BudaErrorBubble ebbl = new BudaErrorBubble("No flow was found to this point");
-            SwingUtilities.invokeLater(new CreateBubble(start_context.getEditor(),ebbl));
+         else {
+            Element rslt =  fac.sendFaitMessage(null,"VARQUERY",args,null);
+            Element qrslt = IvyXml.getChild(rslt,"VALUESET");
+            bubble = new BseanVarBubble(start_context,qrslt);
           }
+       } 
+      catch (BseanException e) {
+         bubble = new BudaErrorBubble("No flow was found to this point");
        }
       
-      if (frslt != null) {
-         String msg = "Flow for " + start_context.getToken();
-         try {
-            BseanExplainBubble fbbl = new BseanExplainBubble(frslt,msg,true); 
-            SwingUtilities.invokeLater(new CreateBubble(start_context.getEditor(),fbbl));
-          }
-         catch (BseanException e) {
-            BoardLog.logE("BSEAN","Problem with trace " + msg + " " + e);
-          }
+      if (bubble != null) {
+         SwingUtilities.invokeLater(new CreateBubble(start_context.getEditor(),bubble));
        }
    }
 
