@@ -84,6 +84,7 @@ import edu.brown.cs.bubbles.board.BoardMetrics;
 import edu.brown.cs.bubbles.board.BoardThreadPool;
 import edu.brown.cs.bubbles.buda.BudaBubble;
 import edu.brown.cs.bubbles.buda.BudaBubbleArea;
+import edu.brown.cs.bubbles.buda.BudaErrorBubble;
 import edu.brown.cs.bubbles.buda.BudaRoot;
 import edu.brown.cs.bubbles.bump.BumpClient;
 import edu.brown.cs.bubbles.bump.BumpLocation;
@@ -146,7 +147,12 @@ BseanExplainBubble(Element qelt,String msg,boolean compact) throws BseanExceptio
     }
 
    if (compact) compactGraph(nodemap);
-   
+   if (start_node == null) {
+       BudaBubble bb = new BudaErrorBubble("No flow was found for this item");
+       setContentPane(bb.getContentPane());
+       return;
+    }
+
    sortGraphNodes(nodemap.values());
    current_path = new PathNode(start_node,null);
    current_path.nextPath();
@@ -164,7 +170,7 @@ BseanExplainBubble(Element qelt,String msg,boolean compact) throws BseanExceptio
       d = IvyXml.getTextElement(errelt,"MESSAGE");
     }
    d = "Explain: " + d;
-   
+
    SwingGridPanel pnl = new PathPanel();
    pnl.beginLayout();
    JLabel lbl = pnl.addBannerLabel(d);
@@ -288,7 +294,7 @@ private void sortGraphNodes(Collection<GraphNode> nodes)
    List<GraphNode> stack = new ArrayList<>();
    // first assign a value of 0 to all nodes on straight path to the root
    sortDfs(start_node,stack,nodevals,done);
-   while (nodevals.size() < nodes.size()) {
+   while (!isDone(nodes,nodevals)) {
       done.clear();
       assignDfs(start_node,nodevals,done);
     }
@@ -301,13 +307,21 @@ private void sortGraphNodes(Collection<GraphNode> nodes)
     }
 }
 
+private boolean isDone(Collection<GraphNode> nodes,Map<GraphNode,Integer> nodeval) 
+{
+   for (GraphNode gn : nodes) {
+       if (nodeval.get(gn) == null) return false;
+    }
+   return true;
+}
 
-private void compactGraph(Map<String,GraphNode> nodemap) 
+
+private void compactGraph(Map<String,GraphNode> nodemap)
 {
    for (Iterator<GraphNode> it = nodemap.values().iterator(); it.hasNext(); ) {
       GraphNode gn = it.next();
       if (gn.remove()) {
-         it.remove();
+	 it.remove();
        }
     }
 }
@@ -378,8 +392,16 @@ private class NodeComparator implements Comparator<GraphNode> {
     }
 
    @Override public int compare(GraphNode g1,GraphNode g2) {
-      int v1 = node_vals.get(g1);
-      int v2 = node_vals.get(g2);
+      Integer v1 = node_vals.get(g1);
+      Integer v2 = node_vals.get(g2);
+      if (v1 == null) {
+         BoardLog.logD("BSEAN","Missing value for node " + g1);
+         return -1;
+       }
+      if (v2 == null) {
+         BoardLog.logD("BSEAN","Missing value for node " + g2);
+         return 1;
+       }
       if (v1 < v2) return -1;
       if (v1 > v2) return 1;
       v1 = g1.getNodeId();
@@ -428,7 +450,7 @@ private static class GraphNode {
       method_description = IvyXml.getAttrString(xml,"SIGNATURE");
       is_start = IvyXml.getAttrBool(xml,"START");
       is_end = IvyXml.getAttrBool(xml,"END");
-   
+
       Element pt = IvyXml.getChild(xml,"POINT");
       start_offset = IvyXml.getAttrInt(pt,"START");
       end_offset = IvyXml.getAttrInt(pt,"END");
@@ -437,7 +459,7 @@ private static class GraphNode {
       line_number = IvyXml.getAttrInt(pt,"LINE");
       ins_offset = IvyXml.getAttrInt(pt,"LOC");
       node_text = IvyXml.getText(pt);
-   
+
       to_nodes = new ArrayList<>();
       from_nodes = new ArrayList<>();
     }
@@ -473,22 +495,22 @@ private static class GraphNode {
    String getFile()				{ return node_file; }
 
    int getStartOffset() 			{ return start_offset; }
-   
+
    boolean canRemove() {
       if (to_nodes.size() != 1) return false;
       GraphNode gn = to_nodes.get(0);
       if (gn.from_nodes.size() != 1) return false;
       if (gn.from_nodes.get(0) != this) return false;
-      
+
       if (line_number != gn.line_number) return false;
       if (!node_reason.equals(gn.node_reason)) return false;
       if (!method_description.equals(gn.method_description)) return false;
       if (!node_file.equals(gn.node_file)) return false;
       if (!node_method.equals(gn.node_method)) return false;
-      
+
       return true;
     }
-   
+
    boolean remove() {
       if (!canRemove()) return false;
       GraphNode gn = to_nodes.get(0);
@@ -556,18 +578,18 @@ private static class PathNode {
       if (graph_node == null) return;
       List<GraphNode> frm = graph_node.getFromNodes();
       if (next_node != null) {
-	 GraphNode gn = next_node.graph_node;
-	 int idx = frm.indexOf(gn);
-	 idx = idx+1;
-	 if (idx >= frm.size()) idx = 0;
-	 GraphNode ngn = frm.get(idx);
-	 buildPath(ngn);
+         GraphNode gn = next_node.graph_node;
+         int idx = frm.indexOf(gn);
+         idx = idx+1;
+         if (idx >= frm.size()) idx = 0;
+         GraphNode ngn = frm.get(idx);
+         buildPath(ngn);
        }
       else if (frm.size() >= 1) {
-	 GraphNode gn = frm.get(0);
-	 buildPath(gn);
+         GraphNode gn = frm.get(0);
+         buildPath(gn);
        }
-
+   
     }
 
    void buildPath(GraphNode gn) {
@@ -810,7 +832,7 @@ private static class PathPanel extends SwingGridPanel {
       catch (Throwable t) { }
     }
 
-}       // end of inner class PathPanel
+}	// end of inner class PathPanel
 
 
 
@@ -913,10 +935,10 @@ private class BseanAnnot implements BaleConstants.BaleAnnotation {
       for_document = BaleFactory.getFactory().getFileOverview(null,for_file,false);
       execute_pos = null;
       try {
-         execute_pos = for_document.createPosition(gn.getStartOffset());
+	 execute_pos = for_document.createPosition(gn.getStartOffset());
        }
       catch (BadLocationException ex) {
-         BoardLog.logE("BSEAN","Bad graph node position",ex);
+	 BoardLog.logE("BSEAN","Bad graph node position",ex);
        }
     }
 
@@ -1075,7 +1097,7 @@ private class ShowCodeAction extends AbstractAction {
       BudaBubble bb = BaleFactory.getFactory().createMethodBubble(proj,mid);
       if (bb == null) return;
       bba.addBubble(bb,BseanExplainBubble.this,null,
-            PLACEMENT_PREFER|PLACEMENT_GROUPED|PLACEMENT_MOVETO);
+	    PLACEMENT_PREFER|PLACEMENT_GROUPED|PLACEMENT_MOVETO);
     }
 
 }	// end of inner class ShowCodeAction

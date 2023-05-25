@@ -134,6 +134,7 @@ public static void initialize(BudaRoot br)
       case JS :
       case PYTHON :
       case REBUS :
+      case DART :
 	 return;
       case JAVA :
 	 break;
@@ -177,11 +178,11 @@ public static void initialize(BudaRoot br)
 	  }
        }
       try {
-         Class.forName("edu.brown.cs.rose.stem.StemMain");
-         haveannot = true;
+	 Class.forName("edu.brown.cs.rose.stem.StemMain");
+	 haveannot = true;
        }
       catch (ClassNotFoundException e) { }
-      
+
       if (haveannot) {
 	 getFactory().auto_start = true;
 	 BseanStarter bs = new BseanStarter(br);
@@ -238,11 +239,11 @@ public static void beginAnalysis()
 {
    BseanFactory fac = getFactory();
    if (fac.current_session != null || fac.server_running || fac.server_started ||
-         fac.auto_start) {
+	 fac.auto_start) {
       // should check if current_session still valid
       return;
     }
-   
+
    fac.start();
 }
 
@@ -612,23 +613,23 @@ private static class EditorListener implements BaleContextListener {
       BaleContextType ttyp = cfg.getTokenType();
       if (last_analysis == null) return;
       switch (ttyp) {
-         default :
-         case NONE :
-            return;
-         case LOCAL_ID :
-         case FIELD_ID :
-         case CALL_ID :
-         case STATIC_FIELD_ID :
-         case STATIC_CALL_ID :
-         case LOCAL_DECL_ID :
-            String method = cfg.getMethodName();
-            if (method == null) {
-               BoardLog.logE("BSEAN","Can't find method name for " + cfg.getDocument());
-               break;
-             }
-            menu.add(new ValueAction(cfg,true));
-            menu.add(new ValueAction(cfg,false));
-            break;
+	 default :
+	 case NONE :
+	    return;
+	 case LOCAL_ID :
+	 case FIELD_ID :
+	 case CALL_ID :
+	 case STATIC_FIELD_ID :
+	 case STATIC_CALL_ID :
+	 case LOCAL_DECL_ID :
+	    String method = cfg.getMethodName();
+	    if (method == null) {
+	       BoardLog.logE("BSEAN","Can't find method name for " + cfg.getDocument());
+	       break;
+	     }
+	    menu.add(new ValueAction(cfg,true));
+	    menu.add(new ValueAction(cfg,false));
+	    break;
        }
     }
 
@@ -640,7 +641,7 @@ private static class ValueAction extends AbstractAction implements Runnable {
 
    private transient BaleContextConfig start_context;
    private boolean do_backflow;
-   
+
    private static final long serialVersionUID = 1;
 
    ValueAction(BaleContextConfig cfg,boolean backflow) {
@@ -660,34 +661,34 @@ private static class ValueAction extends AbstractAction implements Runnable {
       int conddepth = bp.getInt("Bsean.slice.conddepth",4);
       int depth = bp.getInt("Bsean.slice.depth",10);
       CommandArgs args = new CommandArgs("FILE",start_context.getEditor().getContentFile(),
-            "START",apos,
-            "LINE",start_context.getLineNumber(),
-            "TOKEN",start_context.getToken(),
-            "METHOD",start_context.getMethodName(),
-            "CONDDEPTH",conddepth,"DEPTH",depth,
-            "QTYPE","TOKEN");
+	    "START",apos,
+	    "LINE",start_context.getLineNumber(),
+	    "TOKEN",start_context.getToken(),
+	    "METHOD",start_context.getMethodName(),
+	    "CONDDEPTH",conddepth,"DEPTH",depth,
+	    "QTYPE","TOKEN");
       BseanFactory fac = getFactory();
-      
+
       BudaBubble bubble = null;
       try {
-         if (do_backflow) {
-            Element rslt1 = fac.sendFaitMessage(null,"FLOWQUERY",args,null);
-            Element frslt = IvyXml.getChild(rslt1,"QUERY");
-            String msg = "Flow for " + start_context.getToken();
-            bubble = new BseanExplainBubble(frslt,msg,true); 
-          }
-         else {
-            Element rslt =  fac.sendFaitMessage(null,"VARQUERY",args,null);
-            Element qrslt = IvyXml.getChild(rslt,"VALUESET");
-            bubble = new BseanVarBubble(start_context,qrslt);
-          }
-       } 
-      catch (BseanException e) {
-         bubble = new BudaErrorBubble("No flow was found to this point");
+	 if (do_backflow) {
+	    Element rslt1 = fac.sendFaitMessage(null,"FLOWQUERY",args,null);
+	    Element frslt = IvyXml.getChild(rslt1,"QUERY");
+	    String msg = "Flow for " + start_context.getToken();
+	    bubble = new BseanExplainBubble(frslt,msg,true);
+	  }
+	 else {
+	    Element rslt =  fac.sendFaitMessage(null,"VARQUERY",args,null);
+	    Element qrslt = IvyXml.getChild(rslt,"VALUESET");
+	    bubble = new BseanVarBubble(start_context,qrslt);
+	  }
        }
-      
+      catch (BseanException e) {
+	 bubble = new BudaErrorBubble("No flow was found to this point");
+       }
+
       if (bubble != null) {
-         SwingUtilities.invokeLater(new CreateBubble(start_context.getEditor(),bubble));
+	 SwingUtilities.invokeLater(new CreateBubble(start_context.getEditor(),bubble));
        }
    }
 
@@ -725,14 +726,14 @@ private static class ProblemBubbleAction implements BudaConstants.ButtonListener
 
    @Override public void buttonActivated(BudaBubbleArea bba,String id,Point pt) {
       if (bba == null) return;
-   
+
       BudaBubble bbl = null;
       try {
-         bbl = new BseanProblemBubble();
+	 bbl = new BseanProblemBubble();
        }
       catch (BseanException e) {
-         BoardLog.logE("BSEAN","Problem creating problem bubble",e);
-         return;
+	 BoardLog.logE("BSEAN","Problem creating problem bubble",e);
+	 return;
        }
       BudaBubblePosition pos = BudaBubblePosition.MOVABLE;
       BoardProperties bp = BoardProperties.getProperties("Bsean");
@@ -774,27 +775,27 @@ static class ExplainAction extends AbstractAction implements Runnable {
       StringBuffer errids = new StringBuffer();
       errids.append(er0.getId());
       for (int i = 1; i < for_errors.size(); ++i) {
-         errids.append(" ");
-         errids.append(for_errors.get(i).getId());
+	 errids.append(" ");
+	 errids.append(for_errors.get(i).getId());
        }
       CommandArgs args = new CommandArgs("FILE",er0.getFile(),
-            "QTYPE","ERROR",
-            "LINE",er0.getLine(),
-            "ERROR",errids.toString(),
-            "METHOD",er0.getMethod(),
-            "START",er0.getEclipseOffset());
+	    "QTYPE","ERROR",
+	    "LINE",er0.getLine(),
+	    "ERROR",errids.toString(),
+	    "METHOD",er0.getMethod(),
+	    "START",er0.getEclipseOffset());
       BseanFactory bfac = getFactory();
       Element rslt = bfac.sendFaitMessage(null,"QUERY",args,null);
       BoardLog.logD("BSEAN","Query result: " + rslt);
       if (rslt == null) return;
       Element rset = IvyXml.getChild(rslt,"RESULTSET");
       for (Element qelt : IvyXml.children(rset,"QUERY")) {
-         BoardLog.logD("BSEAN","Handle query result");
-         try {
-            BudaBubble nbbl = new BseanExplainBubble(qelt,null,false);
-            SwingUtilities.invokeLater(new CreateBubble(for_window,nbbl));
-          }
-         catch (BseanException e) { }
+	 BoardLog.logD("BSEAN","Handle query result");
+	 try {
+	    BudaBubble nbbl = new BseanExplainBubble(qelt,null,false);
+	    SwingUtilities.invokeLater(new CreateBubble(for_window,nbbl));
+	  }
+	 catch (BseanException e) { }
        }
     }
 
@@ -816,8 +817,8 @@ static class CreateBubble implements Runnable {
       if (new_bubble == null) return;
       BudaBubbleArea bba = BudaRoot.findBudaBubbleArea(for_window);
       bba.addBubble(new_bubble,for_window,null,
-            BudaConstants.PLACEMENT_LOGICAL|BudaConstants.PLACEMENT_NEW|
-            BudaConstants.PLACEMENT_MOVETO|BudaConstants.PLACEMENT_USER);
+	    BudaConstants.PLACEMENT_LOGICAL|BudaConstants.PLACEMENT_NEW|
+	    BudaConstants.PLACEMENT_MOVETO|BudaConstants.PLACEMENT_USER);
     }
 
 }	// end of inner class CreateBubble
@@ -843,8 +844,8 @@ private static class BseanStarter extends Thread {
       buda_root.waitForSetup();
       BseanFactory bf = getFactory();
       if (bf.auto_start){
-         bf.start();
-         bf.auto_start = false;
+	 bf.start();
+	 bf.auto_start = false;
        }
    }
 
@@ -871,25 +872,25 @@ static class FreditAction implements BudaConstants.ButtonListener, Runnable {
       bubble_area = bba;
       at_point = pt;
       result_bubble = null;
-   
+
       BoardThreadPool.start(this);
     }
 
    @Override public void run() {
       if (result_bubble != null) {
-         BudaBubblePosition pos = BudaBubblePosition.MOVABLE;
-         int place = BudaConstants.PLACEMENT_LOGICAL | BudaConstants.PLACEMENT_USER;
-         bubble_area.addBubble(result_bubble,null,at_point,place,pos);
+	 BudaBubblePosition pos = BudaBubblePosition.MOVABLE;
+	 int place = BudaConstants.PLACEMENT_LOGICAL | BudaConstants.PLACEMENT_USER;
+	 bubble_area.addBubble(result_bubble,null,at_point,place,pos);
        }
       else {
-         try {
-            result_bubble = new BseanFreditBubble();
-          }
-         catch (BseanException e) {
-            BoardLog.logE("BSEAN","Problem creating problem bubble",e);
-            return;
-          }
-         if (result_bubble != null) SwingUtilities.invokeLater(this);
+	 try {
+	    result_bubble = new BseanFreditBubble();
+	  }
+	 catch (BseanException e) {
+	    BoardLog.logE("BSEAN","Problem creating problem bubble",e);
+	    return;
+	  }
+	 if (result_bubble != null) SwingUtilities.invokeLater(this);
        }
     }
 
