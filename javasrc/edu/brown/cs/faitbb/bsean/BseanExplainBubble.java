@@ -391,7 +391,7 @@ private class NodeComparator implements Comparator<GraphNode> {
       node_vals = vals;
     }
 
-   @Override public int compare(GraphNode g1,GraphNode g2) {
+    @Override public int compare(GraphNode g1,GraphNode g2) {
       Integer v1 = node_vals.get(g1);
       Integer v2 = node_vals.get(g2);
       if (v1 == null) {
@@ -569,6 +569,7 @@ private static class PathNode {
    GraphNode getGraphNode()			{ return graph_node; }
 
    boolean hasAlternatives() {
+      if (graph_node == null) return false;
       List<GraphNode> frm = graph_node.getFromNodes();
       if (frm != null && frm.size() >= 2) return true;
       return false;
