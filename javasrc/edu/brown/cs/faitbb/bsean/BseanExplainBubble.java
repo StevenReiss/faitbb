@@ -294,10 +294,25 @@ private void sortGraphNodes(Collection<GraphNode> nodes)
    List<GraphNode> stack = new ArrayList<>();
    // first assign a value of 0 to all nodes on straight path to the root
    sortDfs(start_node,stack,nodevals,done);
-   while (!isDone(nodes,nodevals)) {
-      done.clear();
-      assignDfs(start_node,nodevals,done);
+   // handle weird graphs that have unreachable items -- avoid infinite loops
+   int maxtry = 5;
+   for (int i = 0; i < maxtry; ++i) {
+      if (isDone(nodes,nodevals)) break;
+      if (i == maxtry-1) {
+         for (Iterator<GraphNode> it = nodes.iterator(); it.hasNext(); ) {
+            GraphNode gn = it.next();
+            if (nodevals.get(gn) == null) {
+               BoardLog.logD("BSEAN","Remvoe unreachable node " + gn.getNodeId());
+               it.remove();
+             }
+          }
+       }
+      else {
+         done.clear();
+         assignDfs(start_node,nodevals,done);
+       }
     }
+   
 
    NodeComparator nc = new NodeComparator(nodevals);
 
@@ -501,13 +516,13 @@ private static class GraphNode {
       GraphNode gn = to_nodes.get(0);
       if (gn.from_nodes.size() != 1) return false;
       if (gn.from_nodes.get(0) != this) return false;
-
+   
       if (line_number != gn.line_number) return false;
       if (!node_reason.equals(gn.node_reason)) return false;
       if (!method_description.equals(gn.method_description)) return false;
       if (!node_file.equals(gn.node_file)) return false;
       if (!node_method.equals(gn.node_method)) return false;
-
+   
       return true;
     }
 

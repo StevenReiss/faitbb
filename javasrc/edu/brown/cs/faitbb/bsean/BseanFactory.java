@@ -662,34 +662,34 @@ private static class ValueAction extends AbstractAction implements Runnable {
       int conddepth = bp.getInt("Bsean.slice.conddepth",4);
       int depth = bp.getInt("Bsean.slice.depth",10);
       CommandArgs args = new CommandArgs("FILE",start_context.getEditor().getContentFile(),
-	    "START",apos,
-	    "LINE",start_context.getLineNumber(),
-	    "TOKEN",start_context.getToken(),
-	    "METHOD",start_context.getMethodName(),
-	    "CONDDEPTH",conddepth,"DEPTH",depth,
-	    "QTYPE","TOKEN");
+            "START",apos,
+            "LINE",start_context.getLineNumber(),
+            "TOKEN",start_context.getToken(),
+            "METHOD",start_context.getMethodName(),
+            "CONDDEPTH",conddepth,"DEPTH",depth,
+            "QTYPE","TOKEN");
       BseanFactory fac = getFactory();
-
+   
       BudaBubble bubble = null;
       try {
-	 if (do_backflow) {
-	    Element rslt1 = fac.sendFaitMessage(null,"FLOWQUERY",args,null);
-	    Element frslt = IvyXml.getChild(rslt1,"QUERY");
-	    String msg = "Flow for " + start_context.getToken();
-	    bubble = new BseanExplainBubble(frslt,msg,true);
-	  }
-	 else {
-	    Element rslt =  fac.sendFaitMessage(null,"VARQUERY",args,null);
-	    Element qrslt = IvyXml.getChild(rslt,"VALUESET");
-	    bubble = new BseanVarBubble(start_context,qrslt);
-	  }
+         if (do_backflow) {
+            Element rslt1 = fac.sendFaitMessage(null,"FLOWQUERY",args,null);
+            Element frslt = IvyXml.getChild(rslt1,"QUERY");
+            String msg = "Flow for " + start_context.getToken();
+            bubble = new BseanExplainBubble(frslt,msg,true);
+          }
+         else {
+            Element rslt =  fac.sendFaitMessage(null,"VARQUERY",args,null);
+            Element qrslt = IvyXml.getChild(rslt,"VALUESET");
+            bubble = new BseanVarBubble(start_context,qrslt);
+          }
        }
       catch (BseanException e) {
-	 bubble = new BudaErrorBubble("No flow was found to this point");
+         bubble = new BudaErrorBubble("No flow was found to this point");
        }
-
+   
       if (bubble != null) {
-	 SwingUtilities.invokeLater(new CreateBubble(start_context.getEditor(),bubble));
+         SwingUtilities.invokeLater(new CreateBubble(start_context.getEditor(),bubble));
        }
    }
 
@@ -776,27 +776,27 @@ static class ExplainAction extends AbstractAction implements Runnable {
       StringBuffer errids = new StringBuffer();
       errids.append(er0.getId());
       for (int i = 1; i < for_errors.size(); ++i) {
-	 errids.append(" ");
-	 errids.append(for_errors.get(i).getId());
+         errids.append(" ");
+         errids.append(for_errors.get(i).getId());
        }
       CommandArgs args = new CommandArgs("FILE",er0.getFile(),
-	    "QTYPE","ERROR",
-	    "LINE",er0.getLine(),
-	    "ERROR",errids.toString(),
-	    "METHOD",er0.getMethod(),
-	    "START",er0.getEclipseOffset());
+            "QTYPE","ERROR",
+            "LINE",er0.getLine(),
+            "ERROR",errids.toString(),
+            "METHOD",er0.getMethod(),
+            "START",er0.getEclipseOffset());
       BseanFactory bfac = getFactory();
       Element rslt = bfac.sendFaitMessage(null,"QUERY",args,null);
       BoardLog.logD("BSEAN","Query result: " + rslt);
       if (rslt == null) return;
       Element rset = IvyXml.getChild(rslt,"RESULTSET");
       for (Element qelt : IvyXml.children(rset,"QUERY")) {
-	 BoardLog.logD("BSEAN","Handle query result");
-	 try {
-	    BudaBubble nbbl = new BseanExplainBubble(qelt,null,false);
-	    SwingUtilities.invokeLater(new CreateBubble(for_window,nbbl));
-	  }
-	 catch (BseanException e) { }
+         BoardLog.logD("BSEAN","Handle query result");
+         try {
+            BudaBubble nbbl = new BseanExplainBubble(qelt,null,false);
+            SwingUtilities.invokeLater(new CreateBubble(for_window,nbbl));
+          }
+         catch (BseanException e) { }
        }
     }
 
