@@ -202,6 +202,8 @@ BseanExplainBubble(Element qelt,String msg,boolean compact) throws BseanExceptio
 
 @Override protected void localDispose()
 {
+   if (annot_map == null) return;
+   
    for (BseanAnnot an : annot_map.values()) {
       BaleFactory.getFactory().removeAnnotation(an);
     }
