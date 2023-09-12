@@ -130,17 +130,8 @@ private static class ResourceFilter implements BoardPluginFilter {
 
 public static void initialize(BudaRoot br)
 {
-   switch (BoardSetup.getSetup().getLanguage()) {
-      default :
-      case JS :
-      case PYTHON :
-      case REBUS :
-      case DART :
-	 return;
-      case JAVA :
-	 break;
-    }
-
+   if (!BumpClient.getBump().getOptionBool("bubbles.useFait")) return;
+   
    switch (BoardSetup.getSetup().getRunMode()) {
       case NORMAL :
       case CLIENT :
@@ -156,11 +147,22 @@ public static void initialize(BudaRoot br)
     }
 
    BumpClient bc = BumpClient.getBump();
+   BoardProperties bp = BoardProperties.getProperties("Bsean");
+   String skip = bp.getProperty("Bsean.no.autostart");
+   Set<String> skipproj = new HashSet<>();
+   if (skip != null) {
+      for (StringTokenizer tok = new StringTokenizer(skip); tok.hasMoreTokens(); ) {
+         String p = tok.nextToken();
+         skipproj.add(p);
+       }
+    }
    Element xml = bc.getAllProjects(5000);
    if (xml != null) {
       boolean haveannot = false;
+      boolean nostart = false;
       for (Element pe : IvyXml.children(xml,"PROJECT")) {
 	 String pnm = IvyXml.getAttrString(pe,"NAME");
+         if (skipproj != null && skipproj.contains(pnm)) nostart = true;
 	 Element opxml = bc.getProjectData(pnm,false,true,false,false,false);
 	 if (opxml != null) {
 	    Element cpe = IvyXml.getChild(opxml,"CLASSPATH");
@@ -184,7 +186,7 @@ public static void initialize(BudaRoot br)
        }
       catch (ClassNotFoundException e) { }
 
-      if (haveannot) {
+      if (haveannot && !nostart) {
 	 getFactory().auto_start = true;
 	 BseanStarter bs = new BseanStarter(br);
 	 bs.start();
