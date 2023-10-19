@@ -177,7 +177,7 @@ void startAnalysis() throws BseanException
 {
    updateAnnotations(null);
 
-   CommandArgs args = new CommandArgs("REPORT","SOURCE");
+   CommandArgs args = new CommandArgs("REPORT","FULL");
 
    BoardProperties bp = BoardProperties.getProperties("Bsean");
    int nth = bp.getInt("Bsean.fait.threads");

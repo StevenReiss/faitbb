@@ -148,18 +148,12 @@ public static void initialize(BudaRoot br)
 
    BumpClient bc = BumpClient.getBump();
    BoardProperties bp = BoardProperties.getProperties("Bsean");
-   String skip = bp.getProperty("Bsean.no.autostart");
-   Set<String> skipproj = new HashSet<>();
-   if (skip != null) {
-      for (StringTokenizer tok = new StringTokenizer(skip); tok.hasMoreTokens(); ) {
-         String p = tok.nextToken();
-         skipproj.add(p);
-       }
-    }
+   Set<String> skipproj = bp.getStringSet("Bsean.no.autostart");
+   boolean haveannot = false;
+   boolean nostart = false;
+   
    Element xml = bc.getAllProjects(5000);
    if (xml != null) {
-      boolean haveannot = false;
-      boolean nostart = false;
       for (Element pe : IvyXml.children(xml,"PROJECT")) {
 	 String pnm = IvyXml.getAttrString(pe,"NAME");
          if (skipproj != null && skipproj.contains(pnm)) nostart = true;
@@ -277,7 +271,7 @@ private void start()
    if (!server_running) server_started = false; 		// for debug
    startFait();
    if (!server_running) return;
-
+   
    try {
       if (current_session != null) current_session.remove();
       current_session = new BseanSession();
@@ -386,7 +380,7 @@ private boolean startFait()
 {
    BoardSetup bs = BoardSetup.getSetup();
    MintControl mc = bs.getMintControl();
-
+   
    if (BoardSetup.getSetup().getRunMode() == RunMode.CLIENT) {
       MintDefaultReply rply = new MintDefaultReply();
       mc.send("<BICEX TYPE='START' />",rply,MINT_MSG_FIRST_NON_NULL);
@@ -847,8 +841,8 @@ private static class BseanStarter extends Thread {
       buda_root.waitForSetup();
       BseanFactory bf = getFactory();
       if (bf.auto_start){
-	 bf.start();
-	 bf.auto_start = false;
+         bf.start();
+         bf.auto_start = false;
        }
    }
 
