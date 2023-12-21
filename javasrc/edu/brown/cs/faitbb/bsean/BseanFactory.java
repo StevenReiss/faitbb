@@ -64,6 +64,7 @@ import org.w3c.dom.Element;
 import java.awt.Component;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -610,23 +611,23 @@ private static class EditorListener implements BaleContextListener {
       BaleContextType ttyp = cfg.getTokenType();
       if (last_analysis == null) return;
       switch (ttyp) {
-	 default :
-	 case NONE :
-	    return;
-	 case LOCAL_ID :
-	 case FIELD_ID :
-	 case CALL_ID :
-	 case STATIC_FIELD_ID :
-	 case STATIC_CALL_ID :
-	 case LOCAL_DECL_ID :
-	    String method = cfg.getMethodName();
-	    if (method == null) {
-	       BoardLog.logE("BSEAN","Can't find method name for " + cfg.getDocument());
-	       break;
-	     }
-	    menu.add(new ValueAction(cfg,true));
-	    menu.add(new ValueAction(cfg,false));
-	    break;
+         default :
+         case NONE :
+            return;
+         case LOCAL_ID :
+         case FIELD_ID :
+         case CALL_ID :
+         case STATIC_FIELD_ID :
+         case STATIC_CALL_ID :
+         case LOCAL_DECL_ID :
+            String method = cfg.getMethodName();
+            if (method == null) {
+               BoardLog.logE("BSEAN","Can't find method name for " + cfg.getDocument());
+               break;
+             }
+            menu.add(new ValueAction(cfg,true));
+            menu.add(new ValueAction(cfg,false));
+            break;
        }
     }
 
@@ -913,6 +914,10 @@ private static class BseanFreditBubble extends BudaBubble {
       setContentPane(pane,null);
     }
 
+   @Override public void handlePopupMenu(MouseEvent evt) {
+      freditor_remote.handlePopupMenu(evt);
+    }
+   
    @Override public void disposeBubble() {
       fredit_bubbles.remove(this);
    }
