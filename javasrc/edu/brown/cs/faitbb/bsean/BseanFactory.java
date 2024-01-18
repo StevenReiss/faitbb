@@ -133,6 +133,8 @@ public static void initialize(BudaRoot br)
 {
    if (!BumpClient.getBump().getOptionBool("bubbles.useFait")) return;
    
+   BoardLog.logD("BSEAN","USING BSEAN");
+   
    switch (BoardSetup.getSetup().getRunMode()) {
       case NORMAL :
       case CLIENT :
