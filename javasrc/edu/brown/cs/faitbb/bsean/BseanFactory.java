@@ -439,7 +439,16 @@ private boolean startFait()
 	       elt = jarfile.getPath();
 	     }
 	    else {
+               String oelt = elt;
 	       elt = setup.getLibraryPath(elt);
+               File f1 = new File(elt);
+               if (!f1.exists()) {
+                  f1 = setup.getLibraryDirectory().getParentFile();
+                  File f2 = new File(f1,"dropins");
+                  File f3 = new File(f2,oelt);
+                  if (f3.exists()) elt = f3.getPath();
+                }
+               BoardLog.logD("BSEAN","Use class path fait element " + elt);
 	     }
 	  }
 	 if (buf.length() > 0) buf.append(File.pathSeparator);
