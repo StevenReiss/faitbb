@@ -56,10 +56,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 import javax.swing.AbstractAction;
-import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
@@ -73,7 +71,6 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import org.w3c.dom.Element;
-import org.w3c.dom.Entity;
 
 import edu.brown.cs.ivy.mint.MintConstants.CommandArgs;
 import edu.brown.cs.ivy.swing.SwingGridPanel;
@@ -83,7 +80,6 @@ import edu.brown.cs.ivy.xml.IvyXml;
 import edu.brown.cs.ivy.xml.IvyXmlWriter;
 import edu.brown.cs.bubbles.bale.BaleConstants.BaleContextConfig;
 import edu.brown.cs.bubbles.board.BoardColors;
-import edu.brown.cs.bubbles.board.BoardLog;
 import edu.brown.cs.bubbles.board.BoardProperties;
 import edu.brown.cs.bubbles.board.BoardThreadPool;
 import edu.brown.cs.bubbles.buda.BudaBubble;
@@ -323,7 +319,7 @@ private class EntityBox extends JList<VarEntity> {
 }	// end of inner vlass EntityBox
 
 
-private class EntitySelector implements ListSelectionListener {
+private final class EntitySelector implements ListSelectionListener {
 
    @Override public void valueChanged(ListSelectionEvent evt) {
       EntityBox ebox = (EntityBox) evt.getSource();

@@ -69,7 +69,7 @@ private List<SecurityAnnot> current_annots;
 private SwingEventListenerList<BseanErrorHandler> error_handlers;
 
 
-private static AtomicInteger id_counter = new AtomicInteger((int)(Math.random()*256000.0));
+private static AtomicInteger id_counter = new AtomicInteger((int) (Math.random()*256000.0));
 
 
 
@@ -108,7 +108,7 @@ String getSessionId()				{ return session_id; }
 
 List<BseanError> getCurrentErrors()
 {
-   synchronized(error_set) {
+   synchronized (error_set) {
       return new ArrayList<>(error_set);
     }
 }
@@ -300,7 +300,7 @@ BackgroundFait(String cmd,CommandArgs args,String cnts) {
 @Override public void run() {
    BseanFactory bf = BseanFactory.getFactory();
    command_reply = bf.sendFaitMessage(session_id,command_name,command_args,command_contents);
-   synchronized(this) {
+   synchronized (this) {
       have_reply = true;
       notifyAll();
     }
@@ -312,7 +312,7 @@ synchronized Element getResponse() {
       try {
          wait(5000);
        }
-      catch(InterruptedException e) { }
+      catch (InterruptedException e) { }
     }
    return command_reply;
 }

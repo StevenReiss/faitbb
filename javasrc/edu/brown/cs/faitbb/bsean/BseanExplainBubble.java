@@ -621,7 +621,7 @@ private static class PathNode {
 
 
 
-private static class MethodNode {
+private static final class MethodNode {
 
    private GraphNode base_node;
    private int start_index;
@@ -709,8 +709,9 @@ private static class PathModel extends DefaultTreeModel {
 		  if (midx < method_list.size()) {
 		     MethodNode mn1 = method_list.get(midx);
 		     if (!mn1.sameMethod(pn.getGraphNode())) {
-			while (method_list.size() >= midx)
+			while (method_list.size() >= midx) {
 			   method_list.remove(midx);
+                         }
 		      }
 		     else mn1.resetStart(i);
 		   }
@@ -861,7 +862,7 @@ private static class PathPanel extends SwingGridPanel {
 /*										*/
 /********************************************************************************/
 
-private class TreeMouser extends MouseAdapter {
+private final class TreeMouser extends MouseAdapter {
 
    @Override public void mouseClicked(MouseEvent evt) {
      if (evt.getButton() == MouseEvent.BUTTON1) {
@@ -885,7 +886,7 @@ private class TreeMouser extends MouseAdapter {
 /*										*/
 /********************************************************************************/
 
-private class TreeSelector implements TreeSelectionListener {
+private final class TreeSelector implements TreeSelectionListener {
 
    @Override public void valueChanged(TreeSelectionEvent e) {
       TreePath [] tps = e.getPaths();
@@ -1122,7 +1123,7 @@ private class ShowCodeAction extends AbstractAction {
 
 
 
-private class ShowAllCodeAction implements ActionListener {
+private final class ShowAllCodeAction implements ActionListener {
 
    @Override public void actionPerformed(ActionEvent evt) {
       BoardMetrics.noteCommand("BSEAN","ShowAllCode");

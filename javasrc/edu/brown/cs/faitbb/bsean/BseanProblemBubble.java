@@ -234,9 +234,9 @@ BseanProblemBubble() throws BseanException
    int ht = base_height;
    if (sf != 1) {
       float fsz = base_font.getSize();
-      fsz = ((float)(fsz * sf));
+      fsz = ((float) (fsz * sf));
       ft = base_font.deriveFont(fsz);
-      ht = (int)(base_height * sf + 0.5);
+      ht = (int) (base_height * sf + 0.5);
     }
    problem_table.setFont(ft);
    problem_table.setRowHeight(ht);
@@ -378,8 +378,8 @@ private class ProblemTable extends JTable implements MouseListener
       // showBubble(f,ln);
     }
 
-   @Override public void mouseEntered(MouseEvent _e)			{ }
-   @Override public void mouseExited(MouseEvent _e)			{ }
+   @Override public void mouseEntered(MouseEvent e)			{ }
+   @Override public void mouseExited(MouseEvent e)			{ }
    @Override public void mouseReleased(MouseEvent e)			{ }
    @Override public void mousePressed(MouseEvent e)			{ }
 
