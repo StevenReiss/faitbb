@@ -81,7 +81,7 @@ import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
 import javax.swing.SwingUtilities;
 
-public class BseanFactory implements BseanConstants, MintConstants
+public final class BseanFactory implements BseanConstants, MintConstants
 {
 
 
@@ -117,7 +117,7 @@ public static void setup()
 
 
 
-private static class ResourceFilter implements BoardPluginFilter {
+private static final class ResourceFilter implements BoardPluginFilter {
 
    @Override public boolean accept(String nm) {
       if (nm.endsWith("karma.jar")) return true;
@@ -404,7 +404,7 @@ private boolean startFait()
    args.add(IvyExecQuery.getJavaPath());
 
    if (dbgargs != null && dbgargs.contains("###")) {
-      int port = (int)(Math.random() * 1000 + 3000);
+      int port = (int) (Math.random() * 1000 + 3000);
       BoardLog.logI("BSEAN","Fait debugging port " + port);
       dbgargs = dbgargs.replace("###",Integer.toString(port));
     }
@@ -518,7 +518,7 @@ private boolean startFait()
 
 
 
-private class StartHandler implements MintHandler {
+private final class StartHandler implements MintHandler {
 
    @Override public void receive(MintMessage msg,MintArguments args) {
       boolean sts = startFait();
@@ -526,7 +526,7 @@ private class StartHandler implements MintHandler {
       else msg.replyTo("<RESULT VALUE='false' />");
     }
 
-}	// end of inner class StartHandler												 <
+}        // end of inner class StartHandler	
 
 
 
@@ -536,7 +536,7 @@ private class StartHandler implements MintHandler {
 /*										*/
 /********************************************************************************/
 
-private class UpdateHandler implements MintHandler {
+private final class UpdateHandler implements MintHandler {
 
    @Override public void receive(MintMessage msg,MintArguments args) {
       String type = args.getArgument(0);
@@ -578,7 +578,7 @@ private class UpdateHandler implements MintHandler {
 /*										*/
 /********************************************************************************/
 
-private static class ViewListener implements BubbleViewCallback {
+private static final class ViewListener implements BubbleViewCallback {
 
    @Override public void doneConfiguration()				{ }
    @Override public void focusChanged(BudaBubble bb,boolean set)	{ }
@@ -604,7 +604,7 @@ private static class ViewListener implements BubbleViewCallback {
 /*										*/
 /********************************************************************************/
 
-private static class EditorListener implements BaleContextListener {
+private static final class EditorListener implements BaleContextListener {
 
    @Override public BudaBubble getHoverBubble(BaleContextConfig cfg) {
       return null;
@@ -711,7 +711,7 @@ private static class ValueAction extends AbstractAction implements Runnable {
 /*										*/
 /********************************************************************************/
 
-private static class StartAction implements BudaConstants.ButtonListener, Runnable {
+private static final class StartAction implements BudaConstants.ButtonListener, Runnable {
 
    @Override public void buttonActivated(BudaBubbleArea bba,String id,Point pt) {
       BoardThreadPool.start(this);
@@ -731,7 +731,7 @@ private static class StartAction implements BudaConstants.ButtonListener, Runnab
 /*										*/
 /********************************************************************************/
 
-private static class ProblemBubbleAction implements BudaConstants.ButtonListener {
+private static final class ProblemBubbleAction implements BudaConstants.ButtonListener {
 
    @Override public void buttonActivated(BudaBubbleArea bba,String id,Point pt) {
       if (bba == null) return;
