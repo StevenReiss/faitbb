@@ -33,7 +33,7 @@
    </target>
 
    <target name='clean'>
-      <delete dir='${PRO}/faitbb/java/edu/brown/cs/bubbles/bsean' />
+      <delete dir='${PRO}/faitbb/java/edu/brown/cs/faitbb/bsean' />
    </target>
 
    <target name='test' depends='compile'>
