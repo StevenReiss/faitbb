@@ -761,7 +761,7 @@ private static final class ProblemBubbleAction implements BudaConstants.ButtonLi
 /*										*/
 /********************************************************************************/
 
-static class ExplainAction extends AbstractAction implements Runnable { 					 +>
+static class ExplainAction extends AbstractAction implements Runnable { 					
 
    private Component for_window;
    private transient List<BseanError> for_errors;
