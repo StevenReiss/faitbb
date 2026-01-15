@@ -670,34 +670,34 @@ private static class ValueAction extends AbstractAction implements Runnable {
       int conddepth = bp.getInt("Bsean.slice.conddepth",4);
       int depth = bp.getInt("Bsean.slice.depth",10);
       CommandArgs args = new CommandArgs("FILE",start_context.getEditor().getContentFile(),
-	    "START",apos,
-	    "LINE",start_context.getLineNumber(),
-	    "TOKEN",start_context.getToken(),
-	    "METHOD",start_context.getMethodName(),
-	    "CONDDEPTH",conddepth,"DEPTH",depth,
-	    "QTYPE","TOKEN");
+            "START",apos,
+            "LINE",start_context.getLineNumber(),
+            "TOKEN",start_context.getToken(),
+            "METHOD",start_context.getMethodName(),
+            "CONDDEPTH",conddepth,"DEPTH",depth,
+            "QTYPE","TOKEN");
       BseanFactory fac = getFactory();
-
+   
       BudaBubble bubble = null;
       try {
-	 if (do_backflow) {
-	    Element rslt1 = fac.sendFaitMessage(null,"FLOWQUERY",args,null);
-	    Element frslt = IvyXml.getChild(rslt1,"QUERY");
-	    String msg = "Flow for " + start_context.getToken();
-	    bubble = new BseanExplainBubble(frslt,msg,true);
-	  }
-	 else {
-	    Element rslt =  fac.sendFaitMessage(null,"VARQUERY",args,null);
-	    Element qrslt = IvyXml.getChild(rslt,"VALUESET");
-	    bubble = new BseanVarBubble(start_context,qrslt);
-	  }
+         if (do_backflow) {
+            Element rslt1 = fac.sendFaitMessage(null,"FLOWQUERY",args,null);
+            Element frslt = IvyXml.getChild(rslt1,"QUERY");
+            String msg = "Flow for " + start_context.getToken();
+            bubble = new BseanExplainBubble(frslt,msg,true);
+          }
+         else {
+            Element rslt =  fac.sendFaitMessage(null,"VARQUERY",args,null);
+            Element qrslt = IvyXml.getChild(rslt,"VALUESET");
+            bubble = new BseanVarBubble(start_context,qrslt);
+          }
        }
       catch (BseanException e) {
-	 bubble = new BudaErrorBubble("No flow was found to this point");
+         bubble = new BudaErrorBubble("No flow was found to this point");
        }
-
+   
       if (bubble != null) {
-	 SwingUtilities.invokeLater(new CreateBubble(start_context.getEditor(),bubble));
+         SwingUtilities.invokeLater(new CreateBubble(start_context.getEditor(),bubble));
        }
    }
 
